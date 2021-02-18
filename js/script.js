@@ -131,7 +131,7 @@ galleryDIV.addEventListener(`click`, e =>{
     const employeeCard = eventPath[eventPath.indexOf(galleryDIV) - 1];
     // const employeeModal = eventPath[eventPath.indexOf(galleryDIV) - 1];
     // console.log(employeeModal);
-    if (employeeCard) {
+    if (employeeCard !== undefined) {
       //this will provide a live list of the cards which you can reference when you create the modal. The indexes of these
       const cardsArray = [...document.getElementsByClassName("card")];
       const indexOfEmployeeCard = cardsArray.indexOf(employeeCard);
