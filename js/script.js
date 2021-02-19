@@ -1,10 +1,11 @@
 // Initiate variables to be used
-const randomUserURL = `https://randomuser.me/api/?nat=us&results=12`;
-const galleryDIV = document.querySelector(`#gallery`);
-const employeeList = [];
-let employees;
-let galleryHTML;
-let modalHTML;
+const   randomUserURL = `https://randomuser.me/api/?nat=us&results=12`,
+        galleryDIV = document.querySelector(`#gallery`),
+        employeeList = [];
+let employees,
+    galleryHTML,
+    modalHTML,
+    modalIndex;
 
 /**
  * function to fetch object from API and display
@@ -72,7 +73,6 @@ const formatPhoneNumber = (number) => {
     return match ? ['(', match[1], ') ', match[2], '-', match[3]].join('') : null;
 }
 
-
 /**
  * function to format date of birth
  * 
@@ -103,13 +103,11 @@ const generateModalHTML = (employee) => {
                     <p class="modal-text">Birthday: ${formattedDate(employee.dob.date)}</p>
                 </div>
             </div>
+            <div class="modal-btn-container">
+                <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
+                <button type="button" id="modal-next" class="modal-next btn">Next</button>
+            </div>
         </div>`;
-
-        // IMPORTANT: Below is only for exceeds tasks 
-        // <div class="modal-btn-container">
-        //     <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
-        //     <button type="button" id="modal-next" class="modal-next btn">Next</button>
-        // </div>
     galleryDIV.insertAdjacentHTML(`beforeend`, modalHTML);
 };
 
@@ -119,16 +117,13 @@ const generateModalHTML = (employee) => {
  * 
  * @param {object} cardPath array of clicked objects
  */
-const openModal = (cardPath) => {
-    // Targets employee card container selected
-    const employeeCard = cardPath[cardPath.indexOf(galleryDIV) - 1];
-    if (employeeCard !== undefined) {
-        // Create an array of employee cards to reference for the modal
-        const cardsArray = [...document.getElementsByClassName("card")];
-        // Returns the index of the selected employee cards
-        const indexOfEmployeeCard = cardsArray.indexOf(employeeCard);
-        employeeCard.className === `card` ? generateModalHTML(employeeList[indexOfEmployeeCard]) : null;
-    }
+const openModal = (employeeCard) => {
+    // Create an array of employee cards to reference for the modal
+    const cardsArray = [...document.getElementsByClassName("card")];
+    // Returns the index of the selected employee cards
+    const indexOfEmployeeCard = cardsArray.indexOf(employeeCard);
+    modalIndex = indexOfEmployeeCard;
+    generateModalHTML(employeeList[indexOfEmployeeCard]);
 }
 
 /**
@@ -137,11 +132,27 @@ const openModal = (cardPath) => {
  */
 const closeModal = () => galleryDIV.removeChild(galleryDIV.lastChild);
 
+const previousCard = () => {
+    modalIndex--;
+    closeModal();
+    generateModalHTML(employeeList[modalIndex]);
+};
+
+const nextCard = () => {
+    modalIndex++;
+    closeModal();
+    generateModalHTML(employeeList[modalIndex]);
+};
 
 galleryDIV.addEventListener(`click`, e => {
     const eventPath = e.composedPath();
-    openModal(eventPath);
-    e.target.textContent === `X` ? closeModal() : null;
+    // Targets employee card container selected
+    const employeeCard = eventPath[eventPath.indexOf(galleryDIV) - 1];
+    employeeCard !== undefined && employeeCard.className === `card` ? openModal(employeeCard) 
+    : e.target.textContent === `X` ? closeModal() 
+    : modalIndex > 0 && e.target.textContent === `Prev` ? previousCard() 
+    : modalIndex !== employeeList.length - 1 && modalIndex < employeeList.length && e.target.textContent === `Next` ? nextCard()
+    : null;
 });
 
 // Setup initial page state
