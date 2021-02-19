@@ -1,9 +1,11 @@
 // Initiate variables to be used
 const   randomUserURL = `https://randomuser.me/api/?nat=us&results=12`,
         galleryDIV = document.querySelector(`#gallery`),
+        searchDIV = document.querySelector(`.search-container`),
         employeeList = [];
 let employees,
     galleryHTML,
+    searchHTML,
     modalHTML,
     modalIndex;
 
@@ -32,31 +34,13 @@ const getJSON = async (url) => {
 const getEmployees = async (url) => {
     const employeesJSON = await getJSON(url);
     employees = employeesJSON.results;
-    employees.map( employee => generateHTML(employee) );
+    employees.map( employee => {
+        // build an employees array for modal
+        employeeList.push(employee);
+        generateHTML(employee);
+    });
+    employeeSearch();
 }
-
-/**
- * function to generate each employee card with 
- * details of employee
- * 
- * @param {object} employee object details
- */
-const generateHTML = (employee) => {
-    // build an employees array for modal
-    employeeList.push(employee);
-    galleryHTML = `
-        <div class="card">
-            <div class="card-img-container">
-                <img class="card-img" src="${employee.picture.large}" alt="profile picture">
-            </div>
-            <div class="card-info-container">
-                <h3 id="name" class="card-name cap">${employee.name.first} ${employee.name.last}</h3>
-                <p class="card-text">${employee.email}</p>
-                <p class="card-text cap">${employee.location.city}</p>
-            </div>
-        </div>`;
-    galleryDIV.insertAdjacentHTML(`beforeend`, galleryHTML);
-};
 
 /**
  * function to format employees mobile number
@@ -80,6 +64,68 @@ const formatPhoneNumber = (number) => {
  * @return {text} formatted date
  */
 const formattedDate = (date) => new Date(date).toLocaleDateString();
+
+/**
+ * function to generate each employee card with 
+ * details of employee
+ * 
+ * @param {object} employee object details
+ */
+const generateHTML = (employee) => {
+    galleryHTML = `
+        <div class="card">
+            <div class="card-img-container">
+                <img class="card-img" src="${employee.picture.large}" alt="profile picture">
+            </div>
+            <div class="card-info-container">
+                <h3 id="name" class="card-name cap">${employee.name.first} ${employee.name.last}</h3>
+                <p class="card-text">${employee.email}</p>
+                <p class="card-text cap">${employee.location.city}</p>
+            </div>
+        </div>`;
+    galleryDIV.insertAdjacentHTML(`beforeend`, galleryHTML);
+};
+
+/**
+ * function to generate each employee card with 
+ * details of employee
+ * 
+ * @param {object} employee object details
+ */
+const employeeSearch = () => {
+    searchHTML = `
+        <form action="#" method="get">
+            <input type="search" id="search-input" class="search-input" placeholder="Search...">
+            <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+        </form>`;
+    searchDIV.insertAdjacentHTML(`beforeend`, searchHTML);
+    
+    const search = document.querySelector(`#search-input`);
+    const submit = document.querySelector('#search-submit');
+    
+    /**
+     * Loop data.js in search of student's name which match search query.
+     * 
+     * @returns {text} returns HTML
+     */
+    const employeeSearch = () => {
+        const searchedList = [];
+        for ( let i = 0; i < employeeList.length; i++ ) {
+            const employee = employeeList[i];
+            const fullName = `${employee.name.first} ${employee.name.last}`;
+            fullName.toLowerCase().includes(search.value.toLowerCase()) ? searchedList.push(employee) : null;
+        }
+  
+        // Looks for object(s) in new data set, searchedList
+        searchedList.length !== 0 ? (galleryDIV.innerHTML = ``, searchedList.map( contact => generateHTML(contact) ))
+        : galleryDIV.innerHTML = `<h1>No Results found</h1>`;
+    }
+   
+    // Button listener
+    submit.addEventListener(`click`, employeeSearch, false);
+    // Key stroke listener
+    search.addEventListener(`keyup`, employeeSearch, false);
+};
 
 /**
  * function to generate select employee modal with 
