@@ -1,9 +1,6 @@
-//console.log(`I'm connected`);
-
 // Initiate variables to be used
 const randomUserURL = `https://randomuser.me/api/?nat=us&results=12`;
 const galleryDIV = document.querySelector(`#gallery`);
-const modalBtn = document.querySelector(`#modal-close-btn`);
 const employeeList = [];
 let employees;
 let galleryHTML;
@@ -26,8 +23,8 @@ const getJSON = async (url) => {
 }
 
 /**
- * function to call getJSON and iterate over generate employee cards to 
- * display on page
+ * function to call getJSON and iterate over generate 
+ * employee cards to display on page
  * 
  * @param {text} url URL of API end point
  */
@@ -54,37 +51,30 @@ const generateHTML = (employee) => {
             <div class="card-info-container">
                 <h3 id="name" class="card-name cap">${employee.name.first} ${employee.name.last}</h3>
                 <p class="card-text">${employee.email}</p>
-                <p class="card-text cap">${employee.location.city}, ${employee.location.state}</p>
+                <p class="card-text cap">${employee.location.city}</p>
             </div>
         </div>`;
     galleryDIV.insertAdjacentHTML(`beforeend`, galleryHTML);
 };
 
-
 /**
- * function to reformat employees mobile number
+ * function to format employees mobile number
  * 
  * @param {text} number phone number
  * @return {text} formatted number
  */
 const formatPhoneNumber = (number) => {
     //Filter only numbers from the input
-    let cleaned = ('' + number).replace(/\D/g, '');
-    
+    let cleaned = ('' + number).replace(/\D/g, '');    
     //Check if the input is of correct
-    let match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-      //Remove the matched extension code
-      //Change this to format for any country code.
-      let intlCode = (match[1] ? '+1 ' : '')
-      return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
-    }    
-    return null;
+    let match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    //Change this to format for any country code.
+    return match ? ['(', match[1], ') ', match[2], '-', match[3]].join('') : null;
 }
 
 
 /**
- * function to reformat date of birth
+ * function to format date of birth
  * 
  * @param {text} date ISO date format
  * @return {text} formatted date
@@ -124,26 +114,35 @@ const generateModalHTML = (employee) => {
     galleryDIV.insertAdjacentHTML(`beforeend`, modalHTML);
 };
 
+/**
+ * function to open selected employee details
+ * to page within a modal
+ * 
+ * @param {object} cardPath array of clicked objects
+ */
+const openModal = (cardPath) => {
+    // Targets employee card container selected
+    const employeeCard = cardPath[cardPath.indexOf(galleryDIV) - 1];
+    // Create an array of employee cards to reference for the modal
+    const cardsArray = [...document.getElementsByClassName("card")];
+    // Returns the index of the selected employee cards
+    const indexOfEmployeeCard = cardsArray.indexOf(employeeCard);
+    employeeCard.className === `card` ? generateModalHTML(employeeList[indexOfEmployeeCard]) : null;
+}
 
-galleryDIV.addEventListener(`click`, e =>{    
+/**
+ * function to employee modal from page by
+ * removing the last child from gallery DIV
+ */
+const closeModal = () => galleryDIV.removeChild(galleryDIV.lastChild);
+
+
+galleryDIV.addEventListener(`click`, e => {
     const eventPath = e.composedPath();
-    //this will let you get the card that was clicked no matter what element they click on specifically
-    const employeeCard = eventPath[eventPath.indexOf(galleryDIV) - 1];
-    // const employeeModal = eventPath[eventPath.indexOf(galleryDIV) - 1];
-    // console.log(employeeModal);
-    if (employeeCard !== undefined) {
-      //this will provide a live list of the cards which you can reference when you create the modal. The indexes of these
-      const cardsArray = [...document.getElementsByClassName("card")];
-      const indexOfEmployeeCard = cardsArray.indexOf(employeeCard);
-      generateModalHTML(employeeList[indexOfEmployeeCard]);
-    } //else if (employeeModal.getAttribute(`id`) === `modal-close-btn`) {
-    //     const modalContainer = document.querySelector(`.modal-container`);
-    //     console.log(modalContainer);
-    //     modalContainer.style.display = `none`;
-    // }
+    console.log(eventPath);
+    openModal(eventPath);
+    e.target.textContent === `X` ? closeModal() : null;
 });
-
-
 
 // Setup initial page state
 getEmployees(randomUserURL);
