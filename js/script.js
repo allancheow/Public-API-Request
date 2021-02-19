@@ -87,8 +87,8 @@ const generateHTML = (employee) => {
 };
 
 /**
- * function to generate each employee card with 
- * details of employee
+ * function to generate search bar
+ * and provides the search function
  * 
  * @param {object} employee object details
  */
@@ -104,7 +104,8 @@ const employeeSearch = () => {
     const submit = document.querySelector('#search-submit');
     
     /**
-     * Loop data.js in search of student's name which match search query.
+     * Loops employeeList in search of employee's 
+     * name which match search query.
      * 
      * @returns {text} returns HTML
      */
@@ -116,15 +117,15 @@ const employeeSearch = () => {
             fullName.toLowerCase().includes(search.value.toLowerCase()) ? searchedList.push(employee) : null;
         }
   
-        // Looks for object(s) in new data set, searchedList
-        searchedList.length !== 0 ? (galleryDIV.innerHTML = ``, searchedList.map( contact => generateHTML(contact) ))
+        // Looks for object(s) in new array called searchedList
+        searchedList.length !== 0 ? (galleryDIV.innerHTML = ``, searchedList.map(contact => generateHTML(contact)))
         : galleryDIV.innerHTML = `<h1>No Results found</h1>`;
     }
-   
-    // Button listener
-    submit.addEventListener(`click`, employeeSearch, false);
+
     // Key stroke listener
-    search.addEventListener(`keyup`, employeeSearch, false);
+    search.addEventListener(`keyup`, employeeSearch, false);   
+    // Button listener, not needed but extra
+    submit.addEventListener(`click`, employeeSearch, false);
 };
 
 /**
