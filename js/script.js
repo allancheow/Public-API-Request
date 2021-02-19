@@ -88,7 +88,6 @@ const formattedDate = (date) => new Date(date).toLocaleDateString();
  * @param {object} employee object details
  */
 const generateModalHTML = (employee) => {
-    console.log(employee);
     modalHTML = `
         <div class="modal-container">
             <div class="modal">
@@ -123,11 +122,13 @@ const generateModalHTML = (employee) => {
 const openModal = (cardPath) => {
     // Targets employee card container selected
     const employeeCard = cardPath[cardPath.indexOf(galleryDIV) - 1];
-    // Create an array of employee cards to reference for the modal
-    const cardsArray = [...document.getElementsByClassName("card")];
-    // Returns the index of the selected employee cards
-    const indexOfEmployeeCard = cardsArray.indexOf(employeeCard);
-    employeeCard.className === `card` ? generateModalHTML(employeeList[indexOfEmployeeCard]) : null;
+    if (employeeCard !== undefined) {
+        // Create an array of employee cards to reference for the modal
+        const cardsArray = [...document.getElementsByClassName("card")];
+        // Returns the index of the selected employee cards
+        const indexOfEmployeeCard = cardsArray.indexOf(employeeCard);
+        employeeCard.className === `card` ? generateModalHTML(employeeList[indexOfEmployeeCard]) : null;
+    }
 }
 
 /**
@@ -139,7 +140,6 @@ const closeModal = () => galleryDIV.removeChild(galleryDIV.lastChild);
 
 galleryDIV.addEventListener(`click`, e => {
     const eventPath = e.composedPath();
-    console.log(eventPath);
     openModal(eventPath);
     e.target.textContent === `X` ? closeModal() : null;
 });
