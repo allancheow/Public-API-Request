@@ -103,10 +103,10 @@ const generateModalHTML = (employee) => {
                     <p class="modal-text">Birthday: ${formattedDate(employee.dob.date)}</p>
                 </div>
             </div>
-            <div class="modal-btn-container">
-                <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
-                <button type="button" id="modal-next" class="modal-next btn">Next</button>
-            </div>
+            <div class="modal-btn-container">`;        
+    modalIndex === 0 ? null : modalHTML += `<button type="button" id="modal-prev" class="modal-prev btn">Prev</button>`;
+    modalIndex === employeeList.length - 1 ? null : modalHTML += `<button type="button" id="modal-next" class="modal-next btn">Next</button>`;    
+    modalHTML += ` </div>
         </div>`;
     galleryDIV.insertAdjacentHTML(`beforeend`, modalHTML);
 };
@@ -124,6 +124,7 @@ const openModal = (employeeCard) => {
     const indexOfEmployeeCard = cardsArray.indexOf(employeeCard);
     modalIndex = indexOfEmployeeCard;
     generateModalHTML(employeeList[indexOfEmployeeCard]);
+    
 }
 
 /**
@@ -132,12 +133,20 @@ const openModal = (employeeCard) => {
  */
 const closeModal = () => galleryDIV.removeChild(galleryDIV.lastChild);
 
+/**
+ * function to traverse to the previous card
+ * if available
+ */
 const previousCard = () => {
     modalIndex--;
     closeModal();
     generateModalHTML(employeeList[modalIndex]);
 };
 
+/**
+ * function to traverse to the next card
+ * if available
+ */
 const nextCard = () => {
     modalIndex++;
     closeModal();
