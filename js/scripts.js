@@ -3,7 +3,8 @@ const   randomUserURL = `https://randomuser.me/api/?nat=us&results=12`,
         body = document.querySelector(`body`),
         galleryDIV = document.querySelector(`#gallery`),
         searchDIV = document.querySelector(`.search-container`),
-        employeeList = [];
+        employeeList = [],
+        searchedList = [];
 let employees,
     galleryHTML,
     searchHTML,
@@ -116,7 +117,7 @@ const employeeSearch = () => {
      * @returns {text} returns HTML
      */
     const employeeSearch = () => {
-        const searchedList = [];
+        searchedList.splice(0, searchedList.length);
         for ( let i = 0; i < employeeList.length; i++ ) {
             const employee = employeeList[i];
             const fullName = `${employee.name.first} ${employee.name.last}`;
@@ -159,7 +160,7 @@ const generateModalHTML = (employee) => {
             </div>
             <div class="modal-btn-container">`;
     modalIndex === 0 ? null : modalHTML += `<button type="button" id="modal-prev" class="modal-prev btn">Prev</button>`;
-    modalIndex === employeeList.length - 1 ? null : modalHTML += `<button type="button" id="modal-next" class="modal-next btn">Next</button>`;
+    modalIndex === employeeList.length - 1 || modalIndex === searchedList.length - 1 ? null : modalHTML += `<button type="button" id="modal-next" class="modal-next btn">Next</button>`;
     modalHTML += ` </div>
         </div>`;
     galleryDIV.insertAdjacentHTML(`beforeend`, modalHTML);
@@ -177,8 +178,8 @@ const openModal = (employeeCard) => {
     // Returns the index of the selected employee cards
     const indexOfEmployeeCard = cardsArray.indexOf(employeeCard);
     modalIndex = indexOfEmployeeCard;
-    generateModalHTML(employeeList[indexOfEmployeeCard]);
-    
+    searchedList.length === 0 ? generateModalHTML(employeeList[modalIndex]) : generateModalHTML(searchedList[modalIndex]);
+    // generateModalHTML(employeeList[indexOfEmployeeCard]);
 }
 
 /**
@@ -194,7 +195,7 @@ const closeModal = () => galleryDIV.removeChild(galleryDIV.lastChild);
 const previousCard = () => {
     modalIndex--;
     closeModal();
-    generateModalHTML(employeeList[modalIndex]);
+    searchedList.length === 0 ? generateModalHTML(employeeList[modalIndex]) : generateModalHTML(searchedList[modalIndex]);
 };
 
 /**
@@ -204,7 +205,7 @@ const previousCard = () => {
 const nextCard = () => {
     modalIndex++;
     closeModal();
-    generateModalHTML(employeeList[modalIndex]);
+    searchedList.length === 0 ? generateModalHTML(employeeList[modalIndex]) : generateModalHTML(searchedList[modalIndex]);
 };
 
 galleryDIV.addEventListener(`click`, e => {
