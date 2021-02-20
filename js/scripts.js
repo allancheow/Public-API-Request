@@ -10,7 +10,10 @@ let employees,
     modalHTML,
     modalIndex;
 
+// Changed background image on load
 body.style.backgroundImage = `url('img/AnimalCrossing.jpg')`;
+body.style.fontFamily = `'Roboto', sans-serif`;
+
 /**
  * function to fetch object from API and display
  * error to console on failed attempts.
@@ -41,6 +44,9 @@ const getEmployees = async (url) => {
         employeeList.push(employee);
         generateHTML(employee);
     });
+    // Changed background styling for cards
+    const cards = document.querySelectorAll(`.card`);
+    cards.forEach( card => card.style.background = `rgba(255, 255, 255, 0.75)`);
     employeeSearch();
 }
 
@@ -52,7 +58,7 @@ const getEmployees = async (url) => {
  */
 const formatPhoneNumber = (number) => {
     //Filter only numbers from the input
-    let cleaned = ('' + number).replace(/\D/g, '');    
+    let cleaned = ('' + number).replace(/\D/g, '');
     //Check if the input is of correct
     let match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
     //Change this to format for any country code.
@@ -68,10 +74,10 @@ const formatPhoneNumber = (number) => {
 const formattedDate = (date) => new Date(date).toLocaleDateString();
 
 /**
- * function to generate each employee card with 
+ * function to generate each employee card with
  * details of employee
  * 
- * @param {object} employee object details
+ * @param {object} employee object with employee details
  */
 const generateHTML = (employee) => {
     galleryHTML = `
@@ -89,10 +95,8 @@ const generateHTML = (employee) => {
 };
 
 /**
- * function to generate search bar
+ * function to creates search bar
  * and provides the search function
- * 
- * @param {object} employee object details
  */
 const employeeSearch = () => {
     searchHTML = `
@@ -125,14 +129,14 @@ const employeeSearch = () => {
     }
 
     // Key stroke listener
-    search.addEventListener(`keyup`, employeeSearch, false);   
+    search.addEventListener(`keyup`, employeeSearch, false);
     search.addEventListener(`input`, employeeSearch, false);
     // Button listener, not needed but extra
     submit.addEventListener(`click`, employeeSearch, false);
 };
 
 /**
- * function to generate select employee modal with 
+ * function to generate select employee modal with
  * additional details of employee
  * 
  * @param {object} employee object details
@@ -153,9 +157,9 @@ const generateModalHTML = (employee) => {
                     <p class="modal-text">Birthday: ${formattedDate(employee.dob.date)}</p>
                 </div>
             </div>
-            <div class="modal-btn-container">`;        
+            <div class="modal-btn-container">`;
     modalIndex === 0 ? null : modalHTML += `<button type="button" id="modal-prev" class="modal-prev btn">Prev</button>`;
-    modalIndex === employeeList.length - 1 ? null : modalHTML += `<button type="button" id="modal-next" class="modal-next btn">Next</button>`;    
+    modalIndex === employeeList.length - 1 ? null : modalHTML += `<button type="button" id="modal-next" class="modal-next btn">Next</button>`;
     modalHTML += ` </div>
         </div>`;
     galleryDIV.insertAdjacentHTML(`beforeend`, modalHTML);
@@ -165,7 +169,7 @@ const generateModalHTML = (employee) => {
  * function to open selected employee details
  * to page within a modal
  * 
- * @param {object} cardPath array of clicked objects
+ * @param {object} employeeCard array of clicked object
  */
 const openModal = (employeeCard) => {
     // Create an array of employee cards to reference for the modal
@@ -207,9 +211,9 @@ galleryDIV.addEventListener(`click`, e => {
     const eventPath = e.composedPath();
     // Targets employee card container selected
     const employeeCard = eventPath[eventPath.indexOf(galleryDIV) - 1];
-    employeeCard !== undefined && employeeCard.className === `card` ? openModal(employeeCard) 
-    : e.target.textContent === `X` ? closeModal() 
-    : modalIndex > 0 && e.target.textContent === `Prev` ? previousCard() 
+    employeeCard !== undefined && employeeCard.className === `card` ? openModal(employeeCard)
+    : e.target.textContent === `X` ? closeModal()
+    : modalIndex > 0 && e.target.textContent === `Prev` ? previousCard()
     : modalIndex !== employeeList.length - 1 && modalIndex < employeeList.length && e.target.textContent === `Next` ? nextCard()
     : null;
 });
