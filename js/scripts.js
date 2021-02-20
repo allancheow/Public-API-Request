@@ -1,5 +1,6 @@
 // Initiate variables to be used
 const   randomUserURL = `https://randomuser.me/api/?nat=us&results=12`,
+        body = document.querySelector(`body`),
         galleryDIV = document.querySelector(`#gallery`),
         searchDIV = document.querySelector(`.search-container`),
         employeeList = [];
@@ -9,6 +10,7 @@ let employees,
     modalHTML,
     modalIndex;
 
+body.style.backgroundImage = `url('img/AnimalCrossing.jpg')`;
 /**
  * function to fetch object from API and display
  * error to console on failed attempts.
@@ -118,12 +120,13 @@ const employeeSearch = () => {
         }
   
         // Looks for object(s) in new array called searchedList
-        searchedList.length !== 0 ? (galleryDIV.innerHTML = ``, searchedList.map(contact => generateHTML(contact)))
+        searchedList.length !== 0 || search.value.toLowerCase() === `` ? (galleryDIV.innerHTML = ``, searchedList.map(contact => generateHTML(contact)))
         : galleryDIV.innerHTML = `<h1>No Results found</h1>`;
     }
 
     // Key stroke listener
     search.addEventListener(`keyup`, employeeSearch, false);   
+    search.addEventListener(`input`, employeeSearch, false);
     // Button listener, not needed but extra
     submit.addEventListener(`click`, employeeSearch, false);
 };
